@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
+        <record id="action_account_report_d300" model="ir.actions.client">
+            <field name="name">Decont TVA</field>
+            <field name="tag">account_report</field>
+            <field name="context" eval="{'model': 'l10n.ro.report.D300'}" />
+        </record>
+        <menuitem id="menu_action_account_report_d300" name="Decont TVA" action="action_account_report_d300" parent="l10n_ro.account_reports_ro_statements_menu" groups="account.group_account_user"/>
 
-    <template id="l10n_ro_report_D300.internal_layout">
-        <div class="header">
-            <div class="row">
-                <div class="col-xs-6">
-                    <span t-esc="title"/>
-                </div>
-                <div class="col-xs-6 text-right">
-                    <span t-esc="company_name"/>
-                </div>
-            </div>
-        </div>
-        <div class="article">
-            <link href="/l10n_ro_report_D300/static/src/css/report.css" rel="stylesheet"/>
-          <t t-raw="0" />
-        </div>
 
-        <div class="footer">
-            <div class="row">
-                <div class="col-xs-6 custom_footer">
-                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
-                </div>
-                <div class="col-xs-6 text-right custom_footer">
-                    <ul class="list-inline">
-                        <li><span class="page"/></li>
-                        <li>/</li>
-                        <li><span class="topage"/></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </template>
 
+        <template id="line_template_tag_report" inherit_id="account_reports.line_template" primary="True">
+            <xpath expr="//ul[hasclass('o_account_reports_domain_dropdown')]/li[last()]" position="before">
+                <li t-if="line['caret_options'] == 'movelines'" role="presentation" groups="account.group_account_user"><a role="menuitem" tabindex="-1" t-att-data-id="line['id']" action="open_tax_lines">View Tax Lines</a></li>
+            </xpath>
+        </template>
+        <template id="template_tag_report" inherit_id="account_reports.main_template" primary="True">
+            <xpath expr="//tbody" position="replace">
+                <t t-if="lines.get('lines')">
+                    <t t-call="l10n_ro_reports.line_template_tag_report" />
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
 </odoo>
